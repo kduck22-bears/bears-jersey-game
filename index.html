@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bears Jersey Challenge — Bears By 7</title>
+<meta name="description" content="Can you guess the jersey numbers for the Bears newest players? Test your knowledge with Bears By 7.">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background: #F5F0E8;
+  color: #1a1a1a;
+  min-height: 100vh;
+  padding: 20px 12px 40px;
+}
+
+.game-box {
+  max-width: 620px;
+  margin: 0 auto;
+  border: 1px solid #FC8034;
+  border-radius: 8px;
+  padding: 20px;
+  background: #F5F0E8;
+}
+
+.instructions {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* Progress dots */
+.progress-dots {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(11,22,42,0.12);
+  border: 1.5px solid rgba(11,22,42,0.2);
+  transition: background 0.2s, border-color 0.2s;
+}
+.dot.correct { background: #FC8034; border-color: #FC8034; }
+.dot.wrong { background: #0B162A; border-color: #0B162A; }
+.dot.current { border-color: #FC8034; }
+
+/* Question card */
+.q-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(11,22,42,0.1);
+}
+.q-number {
+  font-size: 11px;
+  font-weight: 600;
+  color: #FC8034;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.q-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0B162A;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.q-position {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 18px;
+}
+
+/* Options */
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.opt-btn {
+  background: #F5F0E8;
+  border: 1.5px solid rgba(11,22,42,0.15);
+  border-radius: 8px;
+  padding: 14px 10px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0B162A;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.12s, border-color 0.12s;
+  line-height: 1;
+}
+.opt-btn:hover:not(:disabled) {
+  background: #ede8de;
+  border-color: #FC8034;
+}
+.opt-btn:disabled { cursor: default; }
+.opt-btn.correct { background: #FFF0E6; border-color: #FC8034; color: #FC8034; }
+.opt-btn.wrong { background: #f0f0f0; border-color: #0B162A; color: #0B162A; opacity: 0.5; }
+.opt-btn.reveal { background: #FFF0E6; border-color: #FC8034; color: #FC8034; }
+
+/* Feedback */
+.feedback {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  display: none;
+}
+.feedback.show { display: block; }
+.feedback.correct { background: #FFF0E6; border: 1px solid #FC8034; color: #7c3200; }
+.feedback.wrong { background: #f5f5f5; border: 1px solid #ccc; color: #333; }
+.feedback strong { display: block; margin-bottom: 3px; font-size: 14px; }
+
+.next-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  background: #0B162A;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: none;
+  transition: background 0.15s;
+}
+.next-btn:hover { background: #1a2f50; }
+
+/* Score tracker */
+.score-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: #888;
+}
+.score-val { font-weight: 700; color: #0B162A; font-size: 15px; }
+
+/* Email capture card */
+.email-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 14px;
+  border: 1px solid #FC8034;
+  text-align: center;
+}
+.email-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0B162A;
+  margin-bottom: 6px;
+}
+.email-card p {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.email-input {
+  width: 100%;
+  padding: 11px 13px;
+  font-size: 15px;
+  border: 1.5px solid rgba(11,22,42,0.2);
+  border-radius: 8px;
+  background: #F5F0E8;
+  color: #1a1a1a;
+  outline: none;
+  margin-bottom: 8px;
+  transition: border-color 0.15s;
+}
+.email-input:focus { border-color: #FC8034; }
+.email-submit {
+  width: 100%;
+  padding: 11px;
+  background: #FC8034;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-bottom: 8px;
+}
+.email-submit:hover { background: #e06820; }
+.email-skip {
+  font-size: 12px;
+  color: #aaa;
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  padding: 4px;
+}
+.email-skip:hover { color: #666; }
+.email-msg {
+  font-size: 13px;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 6px;
+  display: none;
+}
+.email-msg.success { background: #FFF0E6; color: #7c3200; display: block; }
+.email-msg.already { background: #F5F0E8; color: #0B162A; display: block; }
+.email-msg.error { background: #fef2f2; color: #991b1b; display: block; }
+
+/* Results */
+.results {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid rgba(11,22,42,0.1);
+  margin-bottom: 14px;
+}
+.results-score {
+  font-size: 48px;
+  font-weight: 800;
+  color: #0B162A;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.results-lbl { font-size: 13px; color: #888; margin-bottom: 6px; }
+.results-title { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 16px; }
+
+.share-box {
+  background: #FFF0E6;
+  border-radius: 8px;
+  padding: 13px;
+  margin-bottom: 12px;
+  border: 1px solid #FC8034;
+}
+.share-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0B162A;
+  white-space: pre-wrap;
+  line-height: 1.8;
+  margin-bottom: 9px;
+}
+.copy-btn {
+  background: #FC8034;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.copy-btn:hover { background: #e06820; }
+
+.cta-box {
+  background: #F5F0E8;
+  border-radius: 8px;
+  padding: 14px;
+  border: 1.5px solid rgba(11,22,42,0.12);
+  margin-top: 12px;
+}
+.cta-box h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0B162A;
+  margin-bottom: 6px;
+}
+.cta-box p { font-size: 13px; color: #444; margin-bottom: 9px; line-height: 1.5; }
+.cta-btn {
+  display: inline-block;
+  background: #0B162A;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.cta-btn:hover { background: #1a2f50; }
+
+.play-again {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 14px;
+  text-align: center;
+  background: white;
+  border: 1px solid rgba(11,22,42,0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  color: #0B162A;
+}
+.play-again:hover { background: #ede8de; }
+</style>
+</head>
+<body>
+
+<div class="game-box">
+  <p class="instructions">The Bears have a new roster. Can you guess the jersey numbers their newest players will be wearing this season? 12 players. One shot each.</p>
+
+  <div class="score-bar">
+    <span>Score: <span class="score-val" id="score-display">0</span></span>
+    <span id="q-counter">Question 1 of 12</span>
+  </div>
+
+  <div class="progress-dots" id="progress-dots"></div>
+
+  <div id="game-area"></div>
+  <div id="email-area"></div>
+  <div id="results-area"></div>
+</div>
+
+<script>
+const PLAYERS = [
+  {
+    name: "Coby Bryant",
+    position: "CB · Free Agent",
+    number: 2,
+    options: [2, 22, 25, 33],
+    comment: "The offseason's biggest addition gets the number of its biggest departure — DJ Moore's old #2."
+  },
+  {
+    name: "Dillon Thieneman",
+    position: "S · Rookie",
+    number: 31,
+    options: [17, 23, 31, 38],
+    comment: "Forms a 3-1-2 safety battery with Bryant. Perfect for Chicago."
+  },
+  {
+    name: "Logan Jones",
+    position: "LB · Free Agent",
+    number: 54,
+    options: [44, 50, 54, 58],
+    comment: "First #54 in Chicago since Urlacher. Big number to carry."
+  },
+  {
+    name: "Caden Barnett",
+    position: "S · Rookie",
+    number: 76,
+    options: [39, 45, 62, 76],
+    comment: "Channel your inner Mongo, Vanilla Gorilla."
+  },
+  {
+    name: "Garrett Bradbury",
+    position: "C · Free Agent",
+    number: 67,
+    options: [55, 61, 67, 73],
+    comment: "The kids will love him."
+  },
+  {
+    name: "Devin Bush",
+    position: "LB · Free Agent",
+    number: 12,
+    options: [12, 45, 51, 56],
+    comment: "Still weird to see a linebacker wearing 12."
+  },
+  {
+    name: "Keyshaun Elliott",
+    position: "S · Rookie",
+    number: 49,
+    options: [28, 38, 49, 53],
+    comment: "Tremaine Edmunds' old digits."
+  },
+  {
+    name: "Malik Muhammad",
+    position: "CB · Rookie",
+    number: 24,
+    options: [20, 24, 27, 36],
+    comment: "Old timers will remember this was Rosey Taylor's old number in the secondary."
+  },
+  {
+    name: "Kalif Raymond",
+    position: "WR · Free Agent",
+    number: 14,
+    options: [11, 14, 18, 83],
+    comment: "Olamide Zaccheaus' replacement even wears the same digits."
+  },
+  {
+    name: "Sam Roush",
+    position: "TE · Rookie",
+    number: 87,
+    options: [80, 84, 87, 89],
+    comment: "Shoutout Emery Moorehead."
+  },
+  {
+    name: "Zavion Thomas",
+    position: "WR · Rookie",
+    number: 81,
+    options: [13, 15, 81, 88],
+    comment: "A receiver in the 80s, just like the old days."
+  },
+  {
+    name: "Jordan van den Berg",
+    position: "DE · Free Agent",
+    number: 96,
+    options: [90, 93, 96, 99],
+    comment: "Akiem Hicks and Alex Brown both wore it proudly."
+  }
+];
+
+const TOTAL = PLAYERS.length;
+const EMAIL_AFTER = 6; // show email form after this many questions
+
+let current = 0;
+let score = 0;
+let answers = []; // true = correct, false = wrong
+let emailCaptured = false;
+let shareTextValue = '';
+
+function buildDots() {
+  const container = document.getElementById('progress-dots');
+  container.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' current' : '');
+    dot.id = 'dot-' + i;
+    container.appendChild(dot);
+  }
+}
+
+function updateDots() {
+  for (let i = 0; i < TOTAL; i++) {
+    const dot = document.getElementById('dot-' + i);
+    if (!dot) continue;
+    if (i < answers.length) {
+      dot.className = 'dot ' + (answers[i] ? 'correct' : 'wrong');
+    } else if (i === current) {
+      dot.className = 'dot current';
+    } else {
+      dot.className = 'dot';
+    }
+  }
+}
+
+function shuffled(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function renderQuestion() {
+  const p = PLAYERS[current];
+  const area = document.getElementById('game-area');
+  document.getElementById('q-counter').textContent = 'Question ' + (current + 1) + ' of ' + TOTAL;
+
+  const opts = shuffled(p.options);
+
+  area.innerHTML =
+    '<div class="q-card">' +
+      '<div class="q-number">Player ' + (current + 1) + ' of ' + TOTAL + '</div>' +
+      '<div class="q-text">' + p.name + '</div>' +
+      '<div class="q-position">' + p.position + '</div>' +
+      '<div class="options">' +
+        opts.map(n =>
+          '<button class="opt-btn" onclick="pick(' + n + ')">#' + n + '</button>'
+        ).join('') +
+      '</div>' +
+      '<div class="feedback" id="feedback"></div>' +
+      '<button class="next-btn" id="next-btn" onclick="advance()">' +
+        (current === TOTAL - 1 ? 'See my results →' : 'Next player →') +
+      '</button>' +
+    '</div>';
+}
+
+window.pick = function(n) {
+  const p = PLAYERS[current];
+  const correct = n === p.number;
+  if (correct) score++;
+  answers.push(correct);
+  document.getElementById('score-display').textContent = score;
+  updateDots();
+
+  document.querySelectorAll('.opt-btn').forEach(btn => {
+    btn.disabled = true;
+    const num = parseInt(btn.textContent.replace('#',''));
+    if (num === p.number) btn.className = 'opt-btn correct';
+    else if (num === n && !correct) btn.className = 'opt-btn wrong';
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (correct ? 'correct' : 'wrong');
+  fb.innerHTML = '<strong>' + (correct ? '✓ Correct!' : '✗ That\'s #' + p.number) + '</strong>' + p.comment;
+
+  document.getElementById('next-btn').style.display = 'block';
+};
+
+window.advance = function() {
+  current++;
+
+  // Show email capture halfway through
+  if (current === EMAIL_AFTER && !emailCaptured) {
+    document.getElementById('game-area').innerHTML = '';
+    showEmailCapture();
+    return;
+  }
+
+  if (current >= TOTAL) {
+    document.getElementById('game-area').innerHTML = '';
+    showResults();
+  } else {
+    renderQuestion();
+  }
+};
+
+function showEmailCapture() {
+  const area = document.getElementById('email-area');
+  area.innerHTML =
+    '<div class="email-card">' +
+      '<h3>Enjoying the game?</h3>' +
+      '<p>Get Bears news, analysis and more games like this in your inbox for free.</p>' +
+      '<input class="email-input" type="email" id="email-input" placeholder="your@email.com" />' +
+      '<button class="email-submit" onclick="submitEmail()">Subscribe to Bears By 7</button>' +
+      '<br><button class="email-skip" onclick="skipEmail()">I\'m already subscribed</button>' +
+      '<div class="email-msg" id="email-msg"></div>' +
+    '</div>';
+}
+
+window.submitEmail = async function() {
+  const email = document.getElementById('email-input').value.trim();
+  if (!email || !email.includes('@')) {
+    const msg = document.getElementById('email-msg');
+    msg.className = 'email-msg error';
+    msg.textContent = 'Please enter a valid email address.';
+    return;
+  }
+
+  const btn = document.querySelector('.email-submit');
+  btn.textContent = 'Subscribing...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/.netlify/functions/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    const msg = document.getElementById('email-msg');
+
+    if (data.success) {
+      if (data.alreadySubscribed) {
+        msg.className = 'email-msg already';
+        msg.textContent = "You're already subscribed — thanks for being a reader! Continuing the game...";
+      } else {
+        msg.className = 'email-msg success';
+        msg.textContent = 'You\'re in! Welcome to Bears By 7. Continuing the game...';
+      }
+      emailCaptured = true;
+      setTimeout(continueAfterEmail, 1800);
+    } else {
+      msg.className = 'email-msg error';
+      msg.textContent = 'Something went wrong. Try again or skip below.';
+      btn.textContent = 'Subscribe to Bears By 7';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    const msg = document.getElementById('email-msg');
+    msg.className = 'email-msg error';
+    msg.textContent = 'Something went wrong. Try again or skip below.';
+    const btn = document.querySelector('.email-submit');
+    btn.textContent = 'Subscribe to Bears By 7';
+    btn.disabled = false;
+  }
+};
+
+window.skipEmail = function() {
+  emailCaptured = true;
+  continueAfterEmail();
+};
+
+function continueAfterEmail() {
+  document.getElementById('email-area').innerHTML = '';
+  renderQuestion();
+}
+
+function buildEmojiGrid() {
+  return answers.map(a => a ? '🟧' : '⬛').join('');
+}
+
+function getTitle(n) {
+  if (n === 12) return "Perfect score! You know this roster cold.";
+  if (n >= 10) return "Sharp! You've been doing your homework.";
+  if (n >= 7)  return "Solid — most fans wouldn't get that many.";
+  if (n >= 4)  return "A few slipped by you. The offseason moves fast.";
+  return "Rough one. Time to follow Bears By 7 more closely.";
+}
+
+function showResults() {
+  const pct = Math.round((score / TOTAL) * 100);
+  const emoji = buildEmojiGrid();
+  shareTextValue = 'Bears By 7 Jersey Challenge\n' + emoji + '\n' + score + '/' + TOTAL + ' (' + pct + '%)\nBeat my score at bearsby7.com/jerseychallenge';
+
+  document.getElementById('results-area').innerHTML =
+    '<div class="results">' +
+      '<div class="results-score">' + score + '/' + TOTAL + '</div>' +
+      '<p class="results-lbl">' + pct + '% correct</p>' +
+      '<p class="results-title">' + getTitle(score) + '</p>' +
+      '<div class="share-box">' +
+        '<div class="share-text">' + shareTextValue + '</div>' +
+        '<button class="copy-btn" id="copy-btn" onclick="window.copyShare()">Copy &amp; Challenge A Friend!</button>' +
+      '</div>' +
+      (!emailCaptured ?
+        '<div class="cta-box">' +
+          '<h3>Subscribe to Bears By 7!</h3>' +
+          '<p>Get Bears news, analysis and more games like this in your inbox for free.</p>' +
+          '<input class="email-input" type="email" id="results-email" placeholder="your@email.com" style="margin-bottom:8px;" />' +
+          '<button class="email-submit" onclick="submitResultsEmail()">Subscribe free</button>' +
+          '<div class="email-msg" id="results-email-msg"></div>' +
+        '</div>'
+        :
+        '<div class="cta-box">' +
+          '<p style="font-size:13px;color:#444;">Thanks for playing — see you in the next one. 🐻</p>' +
+        '</div>'
+      ) +
+      '<button class="play-again" onclick="location.reload()">↺ Play again</button>' +
+    '</div>';
+}
+
+window.submitResultsEmail = async function() {
+  const email = document.getElementById('results-email').value.trim();
+  if (!email || !email.includes('@')) {
+    const msg = document.getElementById('results-email-msg');
+    msg.className = 'email-msg error';
+    msg.textContent = 'Please enter a valid email address.';
+    return;
+  }
+  const btn = document.querySelector('#results-area .email-submit');
+  btn.textContent = 'Subscribing...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/.netlify/functions/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    const msg = document.getElementById('results-email-msg');
+    if (data.success) {
+      msg.className = 'email-msg success';
+      msg.textContent = data.alreadySubscribed ? "You're already subscribed — thanks for reading!" : "You're in! Welcome to Bears By 7.";
+    } else {
+      msg.className = 'email-msg error';
+      msg.textContent = 'Something went wrong. Try again.';
+      btn.textContent = 'Subscribe free';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    const msg = document.getElementById('results-email-msg');
+    msg.className = 'email-msg error';
+    msg.textContent = 'Something went wrong. Try again.';
+  }
+};
+
+window.copyShare = function() {
+  navigator.clipboard.writeText(shareTextValue).then(() => {
+    const btn = document.getElementById('copy-btn');
+    if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy & Challenge A Friend!'; }, 2000); }
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = shareTextValue;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const btn = document.getElementById('copy-btn');
+    if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy & Challenge A Friend!'; }, 2000); }
+  });
+};
+
+// Init
+buildDots();
+renderQuestion();
+</script>
+</body>
+</html>
