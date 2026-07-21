@@ -323,7 +323,7 @@ body {
 <body>
 
 <div class="game-box">
-  <p class="instructions">How well do you know the numbers new Bears players will be wearing this fall? </p>
+  <p class="instructions">How well do you know the numbers new Bears players will be wearing in camp? </p>
 
   <div class="score-bar">
     <span>Score: <span class="score-val" id="score-display">0</span></span>
@@ -630,7 +630,7 @@ function getTitle(n) {
 function showResults() {
   const pct = Math.round((score / TOTAL) * 100);
   const emoji = buildEmojiGrid();
-  shareTextValue = 'Bears By 7 Jersey Challenge\n' + emoji + '\n' + score + '/' + TOTAL + ' (' + pct + '%)\nBeat my score at bearsby7.com/jerseychallenge';
+  shareTextValue = 'Bears By 7 Jersey Challenge\n' + emoji + '\n' + score + '/' + TOTAL + ' (' + pct + '%)\nBeat my score at bearsby7.com/new-numbers';
 
   document.getElementById('results-area').innerHTML =
     '<div class="results">' +
