@@ -524,6 +524,7 @@ window.pick = function(n) {
   fb.innerHTML = '<strong>' + (correct ? '✅ Correct!' : '❌ Wrong — that\'s #' + correctNumber) + '</strong>' + comment;
 
   document.getElementById('next-btn').style.display = 'block';
+  document.getElementById('next-btn').scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
 
 window.advance = function() {
