@@ -358,6 +358,7 @@ const PLAYERS = [
   {
     name: "Logan Jones",
     position: "C · Free Agent",
+    number: 54,
     options: [44, 50, 54, 58],
     photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_12_desktop/bears/nvgapur6mcdaiwlvrssh",
     comment: "First #54 in Chicago since Urlacher. Big number to carry."
@@ -365,6 +366,7 @@ const PLAYERS = [
   {
     name: "Caden Barnett",
     position: "OL · Rookie",
+    number: 76,
     options: [39, 45, 62, 76],
     photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_mobile/f_auto/bears/ttp3ghnwbltugr7a0lxc.jpg",
     comment: "Channel your inner Mongo, Vanilla Gorilla."
@@ -486,7 +488,7 @@ function renderQuestion() {
       (p.photo ? '<img class="player-photo" src="' + p.photo + '" alt="' + p.name + '" />' : '') +
       '<div class="q-text">' + p.name + '</div>' +
       '<div class="q-position">' + p.position + '</div>' +
-      '<div class="options">' +
+      '<div class="options" data-correct="' + p.number + '" data-comment="' + p.comment.replace(/"/g, '&quot;') + '">' +
         opts.map(n =>
           '<button class="opt-btn" data-num="' + n + '" onclick="pick(' + n + ')">#' + n + '</button>'
         ).join('') +
@@ -499,8 +501,12 @@ function renderQuestion() {
 }
 
 window.pick = function(n) {
-  const p = PLAYERS[current];
-  const correct = n === p.number;
+  const optionsEl = document.querySelector('.options');
+  if (!optionsEl) return;
+  const correctNumber = parseInt(optionsEl.getAttribute('data-correct'));
+  const comment = optionsEl.getAttribute('data-comment');
+  if (isNaN(correctNumber)) return;
+  const correct = n === correctNumber;
   if (correct) score++;
   answers.push(correct);
   document.getElementById('score-display').textContent = score;
@@ -509,13 +515,13 @@ window.pick = function(n) {
   document.querySelectorAll('.opt-btn').forEach(btn => {
     btn.disabled = true;
     const num = parseInt(btn.getAttribute('data-num'));
-    if (num === p.number) btn.className = 'opt-btn correct';
+    if (num === correctNumber) btn.className = 'opt-btn correct';
     else if (num === n && !correct) btn.className = 'opt-btn wrong';
   });
 
   const fb = document.getElementById('feedback');
   fb.className = 'feedback show ' + (correct ? 'correct' : 'wrong');
-  fb.innerHTML = '<strong>' + (correct ? '✅ Correct!' : '❌ Wrong — that\'s #' + p.number) + '</strong>' + p.comment;
+  fb.innerHTML = '<strong>' + (correct ? '✅ Correct!' : '❌ Wrong — that\'s #' + correctNumber) + '</strong>' + comment;
 
   document.getElementById('next-btn').style.display = 'block';
 };
@@ -645,7 +651,11 @@ function showResults() {
         '</div>'
         :
         '<div class="cta-box">' +
-          '<p style="font-size:13px;color:#444;">Thanks for playing — see you in the next one. 🐻</p>' +
+          '<h3>Thanks for playing!</h3>' +
+          '<p>Get the Bears By 7 newsletter in your inbox all season long.</p>' +
+          '<input class="email-input" type="email" id="results-email" placeholder="your@email.com" style="margin-bottom:8px;" />' +
+          '<button class="email-submit" style="background:#0B162A;" onclick="submitResultsEmail()">Subscribe for free</button>' +
+          '<div class="email-msg" id="results-email-msg"></div>' +
         '</div>'
       ) +
       '<button class="play-again" onclick="location.reload()">↺ Play again</button>' +
