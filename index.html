@@ -488,7 +488,7 @@ function renderQuestion() {
       '<div class="q-position">' + p.position + '</div>' +
       '<div class="options">' +
         opts.map(n =>
-          '<button class="opt-btn" onclick="pick(' + n + ')">#' + n + '</button>'
+          '<button class="opt-btn" data-num="' + n + '" onclick="pick(' + n + ')">#' + n + '</button>'
         ).join('') +
       '</div>' +
       '<div class="feedback" id="feedback"></div>' +
@@ -508,7 +508,7 @@ window.pick = function(n) {
 
   document.querySelectorAll('.opt-btn').forEach(btn => {
     btn.disabled = true;
-    const num = parseInt(btn.textContent.replace('#',''));
+    const num = parseInt(btn.getAttribute('data-num'));
     if (num === p.number) btn.className = 'opt-btn correct';
     else if (num === n && !correct) btn.className = 'opt-btn wrong';
   });
