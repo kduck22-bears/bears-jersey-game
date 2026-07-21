@@ -51,6 +51,18 @@ body {
 .dot.wrong { background: #0B162A; border-color: #0B162A; }
 .dot.current { border-color: #FC8034; }
 
+/* Player photo */
+.player-photo {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  display: block;
+  background: #e8e4da;
+}
+
 /* Question card */
 .q-card {
   background: white;
@@ -104,9 +116,11 @@ body {
   border-color: #FC8034;
 }
 .opt-btn:disabled { cursor: default; }
-.opt-btn.correct { background: #FFF0E6; border-color: #FC8034; color: #FC8034; }
-.opt-btn.wrong { background: #f0f0f0; border-color: #0B162A; color: #0B162A; opacity: 0.5; }
-.opt-btn.reveal { background: #FFF0E6; border-color: #FC8034; color: #FC8034; }
+.opt-btn.correct { background: #f0fff4; border-color: #22c55e; color: #15803d; }
+.opt-btn.correct::after { content: ' ✓'; }
+.opt-btn.wrong { background: #fff0f0; border-color: #ef4444; color: #b91c1c; }
+.opt-btn.wrong::after { content: ' ✗'; }
+.opt-btn.reveal { background: #f0fff4; border-color: #22c55e; color: #15803d; }
 
 /* Feedback */
 .feedback {
@@ -118,8 +132,8 @@ body {
   display: none;
 }
 .feedback.show { display: block; }
-.feedback.correct { background: #FFF0E6; border: 1px solid #FC8034; color: #7c3200; }
-.feedback.wrong { background: #f5f5f5; border: 1px solid #ccc; color: #333; }
+.feedback.correct { background: #f0fff4; border: 1px solid #22c55e; color: #14532d; }
+.feedback.wrong { background: #fff0f0; border: 1px solid #ef4444; color: #7f1d1d; }
 .feedback strong { display: block; margin-bottom: 3px; font-size: 14px; }
 
 .next-btn {
@@ -327,9 +341,10 @@ body {
 const PLAYERS = [
   {
     name: "Coby Bryant",
-    position: "CB · Free Agent",
+    position: "S · Free Agent",
     number: 2,
     options: [2, 22, 25, 33],
+    photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_12_desktop/v1773085603/bears/s34ccwmuqqkwavfeesp9",
     comment: "The offseason's biggest addition gets the number of its biggest departure — DJ Moore's old #2."
   },
   {
@@ -337,20 +352,21 @@ const PLAYERS = [
     position: "S · Rookie",
     number: 31,
     options: [17, 23, 31, 38],
+    photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_12_desktop/v1778214884/bears/ogdnyasp7asfdje8qwlm",
     comment: "Forms a 3-1-2 safety battery with Bryant. Perfect for Chicago."
   },
   {
     name: "Logan Jones",
-    position: "LB · Free Agent",
-    number: 54,
+    position: "C · Free Agent",
     options: [44, 50, 54, 58],
+    photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_12_desktop/bears/nvgapur6mcdaiwlvrssh",
     comment: "First #54 in Chicago since Urlacher. Big number to carry."
   },
   {
     name: "Caden Barnett",
-    position: "S · Rookie",
-    number: 76,
+    position: "OL · Rookie",
     options: [39, 45, 62, 76],
+    photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_mobile/f_auto/bears/ttp3ghnwbltugr7a0lxc.jpg",
     comment: "Channel your inner Mongo, Vanilla Gorilla."
   },
   {
@@ -358,6 +374,7 @@ const PLAYERS = [
     position: "C · Free Agent",
     number: 67,
     options: [55, 61, 67, 73],
+    photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_6_desktop_2x/f_auto/bears/nm1nysfhbdma0ohhfky2.jpg",
     comment: "The kids will love him."
   },
   {
@@ -365,13 +382,15 @@ const PLAYERS = [
     position: "LB · Free Agent",
     number: 12,
     options: [12, 45, 51, 56],
+    photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_12_desktop/v1773085645/bears/t1ugn8lfgd2gkdnprdbj",
     comment: "Still weird to see a linebacker wearing 12."
   },
   {
     name: "Keyshaun Elliott",
-    position: "S · Rookie",
+    position: "LB · Rookie",
     number: 49,
     options: [28, 38, 49, 53],
+    photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_12_desktop/bears/qavxtio2jpwfknsknut5",
     comment: "Tremaine Edmunds' old digits."
   },
   {
@@ -379,6 +398,7 @@ const PLAYERS = [
     position: "CB · Rookie",
     number: 24,
     options: [20, 24, 27, 36],
+    photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_12_desktop/bears/tfpj1pdubentfzhxt7db",
     comment: "Old timers will remember this was Rosey Taylor's old number in the secondary."
   },
   {
@@ -386,6 +406,7 @@ const PLAYERS = [
     position: "WR · Free Agent",
     number: 14,
     options: [11, 14, 18, 83],
+    photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_12_desktop/v1773238526/bears/zq9kvcwml6mdtgorxto8",
     comment: "Olamide Zaccheaus' replacement even wears the same digits."
   },
   {
@@ -393,6 +414,7 @@ const PLAYERS = [
     position: "TE · Rookie",
     number: 87,
     options: [80, 84, 87, 89],
+    photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_12_desktop/v1778215014/bears/odvskyut2faoqek0rgfb",
     comment: "Shoutout Emery Moorehead."
   },
   {
@@ -400,6 +422,7 @@ const PLAYERS = [
     position: "WR · Rookie",
     number: 81,
     options: [13, 15, 81, 88],
+    photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_12_desktop/bears/caecwmbhewdqznrq4phf",
     comment: "A receiver in the 80s, just like the old days."
   },
   {
@@ -407,6 +430,7 @@ const PLAYERS = [
     position: "DE · Free Agent",
     number: 96,
     options: [90, 93, 96, 99],
+    photo: "https://static.clubs.nfl.com/image/upload/t_editorial_landscape_12_desktop/bears/alqzvuu5tqpidbw5zowx",
     comment: "Akiem Hicks and Alex Brown both wore it proudly."
   }
 ];
@@ -459,6 +483,7 @@ function renderQuestion() {
   area.innerHTML =
     '<div class="q-card">' +
       '<div class="q-number">Player ' + (current + 1) + ' of ' + TOTAL + '</div>' +
+      (p.photo ? '<img class="player-photo" src="' + p.photo + '" alt="' + p.name + '" />' : '') +
       '<div class="q-text">' + p.name + '</div>' +
       '<div class="q-position">' + p.position + '</div>' +
       '<div class="options">' +
@@ -490,7 +515,7 @@ window.pick = function(n) {
 
   const fb = document.getElementById('feedback');
   fb.className = 'feedback show ' + (correct ? 'correct' : 'wrong');
-  fb.innerHTML = '<strong>' + (correct ? '✓ Correct!' : '✗ That\'s #' + p.number) + '</strong>' + p.comment;
+  fb.innerHTML = '<strong>' + (correct ? '✅ Correct!' : '❌ Wrong — that\'s #' + p.number) + '</strong>' + p.comment;
 
   document.getElementById('next-btn').style.display = 'block';
 };
@@ -517,8 +542,8 @@ function showEmailCapture() {
   const area = document.getElementById('email-area');
   area.innerHTML =
     '<div class="email-card">' +
-      '<h3>Enjoying the game?</h3>' +
-      '<p>Get Bears news, analysis and more games like this in your inbox for free.</p>' +
+      '<h3>Are you enjoying this game?</h3>' +
+      '<p>You\'ll fit right in at Bears By 7. Enter your email to get the best Bears news, analysis and games like this one in your inbox all season long.</p>' +
       '<input class="email-input" type="email" id="email-input" placeholder="your@email.com" />' +
       '<button class="email-submit" onclick="submitEmail()">Subscribe to Bears By 7</button>' +
       '<br><button class="email-skip" onclick="skipEmail()">I\'m already subscribed</button>' +
@@ -612,8 +637,8 @@ function showResults() {
       '</div>' +
       (!emailCaptured ?
         '<div class="cta-box">' +
-          '<h3>Subscribe to Bears By 7!</h3>' +
-          '<p>Get Bears news, analysis and more games like this in your inbox for free.</p>' +
+          '<h3>Are you enjoying this game?</h3>' +
+          '<p>You\'ll fit right in at Bears By 7. Enter your email to get the best Bears news, analysis and games like this one in your inbox all season long.</p>' +
           '<input class="email-input" type="email" id="results-email" placeholder="your@email.com" style="margin-bottom:8px;" />' +
           '<button class="email-submit" onclick="submitResultsEmail()">Subscribe free</button>' +
           '<div class="email-msg" id="results-email-msg"></div>' +
